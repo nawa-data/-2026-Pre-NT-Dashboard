@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แดชบอร์ดสรุปผลการทดสอบ Pre NT ครั้งที่ 1 - สพป.ขอนแก่น เขต 5</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Hero Banner -->
+    <header class="header-hero">
+        <div class="header-container">
+            <div class="header-brand">
+                <div class="header-icon">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div class="header-title">
+                    <h1>แดชบอร์ดสรุปผลการทดสอบ Pre NT ครั้งที่ 1</h1>
+                    <p>สำนักงานเขตพื้นที่การศึกษาประถมศึกษาขอนแก่น เขต 5 (17 ศูนย์เครือข่าย 253 โรงเรียน)</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btnExportCSV" class="btn btn-glass">
+                    <i class="fa-solid fa-file-csv"></i> ส่งออกข้อมูล CSV
+                </button>
+                <button id="btnPrint" class="btn btn-glass">
+                    <i class="fa-solid fa-print"></i> พิมพ์รายงาน PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+
+        <!-- Floating Filter Toolbar -->
+        <section class="filter-card" aria-label="แถบตัวกรองข้อมูล">
+            <div class="filter-grid">
+                <!-- Student Type Segmented Control -->
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fa-solid fa-user-graduate"></i> ประเภทนักเรียน:</label>
+                    <div class="segmented-control" id="segType">
+                        <button class="segmented-btn active" data-type="all">ทั้งหมด</button>
+                        <button class="segmented-btn" data-type="เด็กปกติ">เด็กปกติ</button>
+                        <button class="segmented-btn" data-type="เด็กพิเศษ">เด็กพิเศษ</button>
+                    </div>
+                </div>
+
+                <!-- Subject Segmented Control -->
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fa-solid fa-book-open"></i> วิชาที่แสดง:</label>
+                    <div class="segmented-control" id="segSubject">
+                        <button class="segmented-btn active" data-subject="both">รวม 2 วิชา</button>
+                        <button class="segmented-btn" data-subject="th">ภาษาไทย</button>
+                        <button class="segmented-btn" data-subject="ma">คณิตศาสตร์</button>
+                    </div>
+                </div>
+
+                <!-- Center Select -->
+                <div class="filter-group">
+                    <label class="filter-label" for="selectCenter"><i class="fa-solid fa-sitemap"></i> ศูนย์เครือข่าย:</label>
+                    <select id="selectCenter" class="form-select">
+                        <option value="all">ทุกศูนย์เครือข่าย (17 ศูนย์)</option>
+                    </select>
+                </div>
+
+                <!-- School Select -->
+                <div class="filter-group">
+                    <label class="filter-label" for="selectSchool"><i class="fa-solid fa-school"></i> โรงเรียน:</label>
+                    <select id="selectSchool" class="form-select">
+                        <option value="all">ทุกโรงเรียน (253 โรงเรียน)</option>
+                    </select>
+                </div>
+
+                <!-- Search Input & Reset Button -->
+                <div class="filter-group" style="flex-direction: row; gap: 0.5rem; align-items: flex-end;">
+                    <div style="flex: 1;">
+                        <label class="filter-label" for="inputSearch"><i class="fa-solid fa-magnifying-glass"></i> ค้นหา:</label>
+                        <input type="text" id="inputSearch" class="form-input" placeholder="พิมพ์ชื่อโรงเรียน/นักเรียน...">
+                    </div>
+                    <button id="btnResetFilter" class="btn btn-outline" title="รีเซ็ตตัวกรอง">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Official NT Quality Criteria Card -->
+        <div class="card" style="border-left: 5px solid #9F1239; margin-bottom: 1.5rem;">
+            <div class="card-header" style="cursor: pointer; padding-bottom: 0.5rem; border-bottom: none;" id="headerCriteriaToggle">
+                <h3 class="card-title" style="color: #9F1239;">
+                    <i class="fa-solid fa-scale-balanced"></i> เกณฑ์การตัดสินระดับคุณภาพ NT (อ้างอิงมาตรฐาน สพฐ.)
+                </h3>
+                <span class="badge" style="background: #FFE4E6; color: #9F1239;" id="badgeCriteriaStatus">ดูเกณฑ์ตารางคะแนน <i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+            <div id="bodyCriteria" style="display: none; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+                <div class="table-responsive">
+                    <table class="data-table" style="text-align: center;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #881337 0%, #BE123C 100%); color: white;">
+                                <th style="color: white; text-align: center;">ระดับคุณภาพ</th>
+                                <th style="color: white; text-align: center;">คณิตศาสตร์ (ร้อยละ)</th>
+                                <th style="color: white; text-align: center;">ภาษาไทย (ร้อยละ)</th>
+                                <th style="color: white; text-align: center;">รวม 2 ด้าน (ร้อยละ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge badge-excellent"><i class="fa-solid fa-star"></i> ดีมาก</span></td>
+                                <td><strong>67.00 - 100.00</strong></td>
+                                <td><strong>70.00 - 100.00</strong></td>
+                                <td><strong>68.50 - 100.00</strong></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-good"><i class="fa-solid fa-thumbs-up"></i> ดี</span></td>
+                                <td>44.00 - 66.99</td>
+                                <td>50.00 - 69.99</td>
+                                <td>47.00 - 68.49</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-fair"><i class="fa-solid fa-minus"></i> พอใช้</span></td>
+                                <td>26.00 - 43.99</td>
+                                <td>29.00 - 49.99</td>
+                                <td>27.50 - 46.99</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-need-imp"><i class="fa-solid fa-triangle-exclamation"></i> ปรับปรุง</span></td>
+                                <td>0.00 - 25.99</td>
+                                <td>0.00 - 28.99</td>
+                                <td>0.00 - 27.49</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Stat Cards -->
+        <section class="kpi-grid" aria-label="ตัวเลขสถิติสำคัญ">
+            <!-- Card 1: Total Students -->
+            <div class="kpi-card kpi-stat">
+                <div class="kpi-header">
+                    <span class="kpi-title">ผู้เข้าสอบทั้งหมด</span>
+                    <div class="kpi-badge-icon"><i class="fa-solid fa-users"></i></div>
+                </div>
+                <div class="kpi-value-group">
+                    <span id="kpiExaminees" class="kpi-value">0</span>
+                    <span class="kpi-unit">คน</span>
+                </div>
+                <div class="kpi-subtext">
+                    <span>จากนักเรียนทั้งหมด: <strong id="kpiTotalStudents">0</strong> คน</span>
+                    <span id="kpiExamRate" class="badge badge-good">100%</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Overall Mean Score -->
+            <div class="kpi-card kpi-both">
+                <div class="kpi-header">
+                    <span class="kpi-title">คะแนนเฉลี่ยรวม 2 วิชา</span>
+                    <div class="kpi-badge-icon"><i class="fa-solid fa-award"></i></div>
+                </div>
+                <div class="kpi-value-group">
+                    <span id="kpiBothAvg" class="kpi-value">0.00</span>
+                    <span class="kpi-unit">/ 200</span>
+                </div>
+                <div class="kpi-subtext">
+                    <span>ร้อยละเฉลี่ย: <strong id="kpiBothPct">0.00%</strong></span>
+                    <span id="kpiBothLevel" class="badge badge-good">ดี</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Thai Mean Score -->
+            <div class="kpi-card kpi-th">
+                <div class="kpi-header">
+                    <span class="kpi-title">เฉลี่ย วิชาภาษาไทย</span>
+                    <div class="kpi-badge-icon"><i class="fa-solid fa-language"></i></div>
+                </div>
+                <div class="kpi-value-group">
+                    <span id="kpiThAvg" class="kpi-value">0.00</span>
+                    <span class="kpi-unit">/ 100</span>
+                </div>
+                <div class="kpi-subtext">
+                    <span>ร้อยละเฉลี่ย: <strong id="kpiThPct">0.00%</strong></span>
+                    <span id="kpiThLevel" class="badge badge-excellent">ดีมาก</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Math Mean Score -->
+            <div class="kpi-card kpi-ma">
+                <div class="kpi-header">
+                    <span class="kpi-title">เฉลี่ย วิชาคณิตศาสตร์</span>
+                    <div class="kpi-badge-icon"><i class="fa-solid fa-calculator"></i></div>
+                </div>
+                <div class="kpi-value-group">
+                    <span id="kpiMaAvg" class="kpi-value">0.00</span>
+                    <span class="kpi-unit">/ 100</span>
+                </div>
+                <div class="kpi-subtext">
+                    <span>ร้อยละเฉลี่ย: <strong id="kpiMaPct">0.00%</strong></span>
+                    <span id="kpiMaLevel" class="badge badge-good">ดี</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="nav-tabs" aria-label="เมนูสลับมุมมอง">
+            <button class="tab-btn active" data-tab="tabDistrict">
+                <i class="fa-solid fa-chart-column"></i> ภาพรวมระดับเขตพื้นที่
+            </button>
+            <button class="tab-btn" data-tab="tabCenter">
+                <i class="fa-solid fa-sitemap"></i> ภาพระดับศูนย์เครือข่าย (17 ศูนย์)
+            </button>
+            <button class="tab-btn" data-tab="tabSchool">
+                <i class="fa-solid fa-school"></i> ภาพรายโรงเรียน & ข้อมูลนักเรียน
+            </button>
+        </nav>
+
+        <!-- TAB 1: ภาพรวมระดับเขตพื้นที่ (District Overview) -->
+        <section id="tabDistrict" class="tab-panel active">
+            <!-- Quality Levels Summary Banner -->
+            <div class="quality-grid">
+                <div class="quality-card lvl-excellent">
+                    <div class="quality-info">
+                        <h4>ระดับดีมาก</h4>
+                        <div id="qCntExcellent" class="quality-count">0 คน</div>
+                    </div>
+                    <div id="qPctExcellent" class="quality-pct">0%</div>
+                </div>
+                <div class="quality-card lvl-good">
+                    <div class="quality-info">
+                        <h4>ระดับดี</h4>
+                        <div id="qCntGood" class="quality-count">0 คน</div>
+                    </div>
+                    <div id="qPctGood" class="quality-pct">0%</div>
+                </div>
+                <div class="quality-card lvl-fair">
+                    <div class="quality-info">
+                        <h4>ระดับพอใช้</h4>
+                        <div id="qCntFair" class="quality-count">0 คน</div>
+                    </div>
+                    <div id="qPctFair" class="quality-pct">0%</div>
+                </div>
+                <div class="quality-card lvl-need-imp">
+                    <div class="quality-info">
+                        <h4>ระดับปรับปรุง</h4>
+                        <div id="qCntNeedImp" class="quality-count">0 คน</div>
+                    </div>
+                    <div id="qPctNeedImp" class="quality-pct">0%</div>
+                </div>
+            </div>
+
+            <!-- District Charts Row -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                <!-- Chart 1: Center Comparison Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-bar"></i> เปรียบเทียบผลสัมฤทธิ์ 17 ศูนย์เครือข่าย</h3>
+                    </div>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="chartCenterCompare"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Quality Distribution Donut -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-pie"></i> สัดส่วนระดับคุณภาพนักเรียน (ตามเกณฑ์มาตรฐาน NT)</h3>
+                    </div>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="chartQualityDonut"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Centers Summary Ranking Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa-solid fa-ranking-star"></i> ตารางสรุปและจัดอันดับ 17 ศูนย์เครือข่าย</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="tableCenters">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px; text-align: center;">อันดับ</th>
+                                <th>ศูนย์เครือข่าย</th>
+                                <th style="text-align: center;">จำนวนโรงเรียน</th>
+                                <th style="text-align: center;">นักเรียนทั้งหมด</th>
+                                <th style="text-align: center;">ผู้เข้าสอบ</th>
+                                <th style="text-align: right;">เฉลี่ย ภาษาไทย (100)</th>
+                                <th style="text-align: right;">เฉลี่ย คณิตศาสตร์ (100)</th>
+                                <th style="text-align: right;">เฉลี่ย รวม 2 วิชา (200)</th>
+                                <th style="text-align: right;">ร้อยละเฉลี่ย</th>
+                                <th style="text-align: center;">ระดับคุณภาพ</th>
+                                <th style="text-align: center;">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: ภาพระดับศูนย์เครือข่าย (Network Center View) -->
+        <section id="tabCenter" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa-solid fa-cubes"></i> เลือกศูนย์เครือข่ายเพื่อเจาะลึกข้อมูล</h3>
+                    <span id="centerCountBadge" class="badge badge-normal">17 ศูนย์เครือข่าย</span>
+                </div>
+                <div id="centerCardsGrid" class="center-grid">
+                    <!-- Interactive Cards Generated via JS -->
+                </div>
+            </div>
+
+            <!-- Selected Center Details Section -->
+            <div id="centerDetailCard" class="card" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <span id="selectedCenterTitle">ศูนย์เครือข่าย</span>
+                    </h3>
+                    <div id="selectedCenterMeta" style="font-size: 0.9rem; color: var(--text-muted);">
+                        <!-- Meta stats -->
+                    </div>
+                </div>
+
+                <!-- Schools Comparison Chart within Center -->
+                <div style="position: relative; height: 300px; margin-bottom: 1.5rem;">
+                    <canvas id="chartCenterSchools"></canvas>
+                </div>
+
+                <!-- Table of Schools in Center -->
+                <div class="table-responsive">
+                    <table class="data-table" id="tableCenterSchools">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px; text-align: center;">ที่</th>
+                                <th>ชื่อโรงเรียน</th>
+                                <th style="text-align: center;">ผู้เข้าสอบ</th>
+                                <th style="text-align: right;">เฉลี่ย ภาษาไทย</th>
+                                <th style="text-align: right;">เฉลี่ย คณิตศาสตร์</th>
+                                <th style="text-align: right;">เฉลี่ย รวม 2 วิชา</th>
+                                <th style="text-align: right;">ร้อยละเฉลี่ย</th>
+                                <th style="text-align: center;">ระดับคุณภาพ</th>
+                                <th style="text-align: center;">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: ภาพรายโรงเรียน & ข้อมูลนักเรียน (School & Student View) -->
+        <section id="tabSchool" class="tab-panel">
+            <!-- Schools Leaderboard Table Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa-solid fa-school-flag"></i> รายชื่อโรงเรียนทั้งหมด (253 โรงเรียน)</h3>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">
+                        แสดงผล: <strong id="schoolFilteredCount">253</strong> โรงเรียน
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="tableSchools">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px; text-align: center;">ที่</th>
+                                <th class="sortable" data-sort="school">โรงเรียน <i class="fa-solid fa-sort"></i></th>
+                                <th class="sortable" data-sort="center">ศูนย์เครือข่าย <i class="fa-solid fa-sort"></i></th>
+                                <th style="text-align: center;" class="sortable" data-sort="examinees">ผู้เข้าสอบ <i class="fa-solid fa-sort"></i></th>
+                                <th style="text-align: right;" class="sortable" data-sort="th_avg">เฉลี่ย ภาษาไทย <i class="fa-solid fa-sort"></i></th>
+                                <th style="text-align: right;" class="sortable" data-sort="ma_avg">เฉลี่ย คณิตศาสตร์ <i class="fa-solid fa-sort"></i></th>
+                                <th style="text-align: right;" class="sortable" data-sort="tot_avg">เฉลี่ย รวม 2 วิชา <i class="fa-solid fa-sort"></i></th>
+                                <th style="text-align: right;" class="sortable" data-sort="tot_pct">ร้อยละ <i class="fa-solid fa-sort"></i></th>
+                                <th style="text-align: center;">ระดับคุณภาพ</th>
+                                <th style="text-align: center;">เจาะลึกนักเรียน</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <div class="pagination-info" id="schoolPagInfo">แสดง 1 ถึง 15 จาก 253 โรงเรียน</div>
+                    <div class="pagination-controls" id="schoolPagControls"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for School Drill-Down Student List -->
+    <div id="schoolModal" class="modal-backdrop" aria-hidden="true" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h3 id="modalSchoolName">โรงเรียน...</h3>
+                    <p id="modalSchoolCenter">ศูนย์เครือข่าย...</p>
+                </div>
+                <button id="btnModalClose" class="btn-close" aria-label="ปิดหน้าต่าง"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Modal KPI Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                    <div style="background: var(--bg-surface-soft); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">จำนวนผู้เข้าสอบ</div>
+                        <div id="modalStatExaminees" style="font-size: 1.35rem; font-weight: 700;">0 คน</div>
+                    </div>
+                    <div style="background: var(--color-th-light); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid rgba(5,150,105,0.2); text-align: center;">
+                        <div style="font-size: 0.8rem; color: var(--color-th);">เฉลี่ย ภาษาไทย</div>
+                        <div id="modalStatThAvg" style="font-size: 1.35rem; font-weight: 700; color: var(--color-th);">0.00</div>
+                    </div>
+                    <div style="background: var(--color-ma-light); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid rgba(37,99,235,0.2); text-align: center;">
+                        <div style="font-size: 0.8rem; color: var(--color-ma);">เฉลี่ย คณิตศาสตร์</div>
+                        <div id="modalStatMaAvg" style="font-size: 1.35rem; font-weight: 700; color: var(--color-ma);">0.00</div>
+                    </div>
+                    <div style="background: var(--color-both-light); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid rgba(124,58,237,0.2); text-align: center;">
+                        <div style="font-size: 0.8rem; color: var(--color-both);">เฉลี่ย รวม 2 วิชา</div>
+                        <div id="modalStatBothAvg" style="font-size: 1.35rem; font-weight: 700; color: var(--color-both);">0.00</div>
+                    </div>
+                </div>
+
+                <!-- Modal Student Table Filter & Search -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <h4 style="font-size: 1rem; font-weight: 600;"><i class="fa-solid fa-users-rectangle"></i> รายชื่อนักเรียนและผลคะแนน</h4>
+                    <input type="text" id="inputModalSearch" class="form-input" style="width: 240px; padding: 0.4rem 0.75rem; font-size: 0.85rem;" placeholder="ค้นหาชื่อนักเรียน...">
+                </div>
+
+                <!-- Modal Student Table -->
+                <div class="table-responsive">
+                    <table class="data-table" id="tableModalStudents">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align: center;">ที่</th>
+                                <th>ชื่อ - นามสกุล</th>
+                                <th style="text-align: center;">ประเภท</th>
+                                <th style="text-align: center;">สถานะ</th>
+                                <th style="text-align: right;">ภาษาไทย (100)</th>
+                                <th style="text-align: center;">ระดับ (TH)</th>
+                                <th style="text-align: right;">คณิตศาสตร์ (100)</th>
+                                <th style="text-align: center;">ระดับ (MA)</th>
+                                <th style="text-align: right;">รวม 2 วิชา (200)</th>
+                                <th style="text-align: center;">ระดับรวม</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data & App Logic JS -->
+    <script src="nt_data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
